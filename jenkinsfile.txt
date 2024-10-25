@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+    tools{
+        maven 'M3'
+    }
+
+    stages {
+        stage('Git Clone') {
+            steps {
+        git 'https://github.com/GowthamDivya/WebApp.git'
+            }
+        }
+         stage('mvn build') {
+            steps {
+        sh 'mvn clean package'
+            }
+        }
+         stage('Docker Image') {
+            steps {
+        sh 'docker build -t gtechimage .'
+            }
+        }
+        stage('Doployment') {
+            steps {
+                sh 'docker stop gtechc'
+                sh 'docker rm gtechc'
+                sh 'docker run -d  -p 9090:8080 --name gtechc gtechimage'
+            }
+        }
+    }
+}
